@@ -32,7 +32,7 @@ const ecsClient = new ECSClient({
 
 const config = {
     CLUSTER: 'arn:aws:ecs:ap-south-1:171358186705:cluster/build-cluster-2',
-    TASK: 'arn:aws:ecs:ap-south-1:171358186705:task-definition/builder-task:2'
+    TASK: 'arn:aws:ecs:ap-south-1:171358186705:task-definition/builder-task:3'
 }
 
 app.use(express.json())
@@ -41,19 +41,10 @@ app.post('/project', async (req, res) => {
     const { gitURL, slug } = req.body
     const projectSlug = slug ? slug : generateSlug()
 
-    // Spin the container
     const command = new RunTaskCommand({
         cluster: config.CLUSTER,
         taskDefinition: config.TASK,
-        launchType: 'FARGET',
         count: 1,
-        networkConfiguration: {
-            awsvpcConfiguration: {
-                assignPublicIp: 'ENABLED',
-                subnets: ['subnet-05f19af9205820915', 'subnet-02525151667110c90', 'subnet-0629900b8b387d7fa'],
-                securityGroups: ['sg-061d8936b960fc485']
-            }
-        },
         overrides: {
             containerOverrides: [
                 {
